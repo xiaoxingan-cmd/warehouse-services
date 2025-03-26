@@ -183,6 +183,16 @@
     </changeSet>
 
     <changeSet author="quarkus" id="15">
+        <insert tableName="companies">
+            <column name="name" value="Test Company2"/>
+            <column name="description" value="This is a test company.2"/>
+            <column name="country" value="Test Country2"/>
+            <column name="created_at" valueComputed="now()"/>
+            <column name="updated_at" valueComputed="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="quarkus" id="16">
         <insert tableName="customers">
             <column name="username" value="testuser"/>
             <column name="adress" value="123 Test St, Test City"/>
@@ -192,7 +202,7 @@
         </insert>
     </changeSet>
 
-    <changeSet author="quarkus" id="16">
+    <changeSet author="quarkus" id="17">
         <insert tableName="customers">
             <column name="username" value="testuser2"/>
             <column name="adress" value="123 Test St, Test City2"/>
@@ -202,7 +212,7 @@
         </insert>
     </changeSet>
 
-    <changeSet author="quarkus" id="17">
+    <changeSet author="quarkus" id="18">
         <insert tableName="products">
             <column name="company_id" value="1"/>
             <column name="name" value="Lime"/>
@@ -214,7 +224,7 @@
         </insert>
     </changeSet>
 
-    <changeSet author="quarkus" id="18">
+    <changeSet author="quarkus" id="19">
         <insert tableName="products">
             <column name="company_id" value="1"/>
             <column name="name" value="Apple"/>
@@ -226,7 +236,7 @@
         </insert>
     </changeSet>
 
-    <changeSet author="quarkus" id="19">
+    <changeSet author="quarkus" id="20">
         <insert tableName="reviews">
             <column name="customer_id" value="1"/>
             <column name="product_id" value="1"/>
@@ -237,7 +247,7 @@
         </insert>
     </changeSet>
 
-    <changeSet author="quarkus" id="20">
+    <changeSet author="quarkus" id="21">
         <insert tableName="customers_cart">
             <column name="products_id" value="1"/>
             <column name="customers_id" value="1"/>

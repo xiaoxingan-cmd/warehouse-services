@@ -1,7 +1,9 @@
 package com.xiaoxingan.utils.validator;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.ws.rs.core.Response;
 import lombok.Getter;
@@ -12,8 +14,11 @@ import java.util.Set;
 
 @Slf4j
 public class Validate<T> {
-    @Inject
     Validator validator;
+
+    public Validate() {
+        this.validator = Validation.buildDefaultValidatorFactory().getValidator();
+    }
 
     @Getter
     private Response badResponse;

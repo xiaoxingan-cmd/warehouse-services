@@ -10,11 +10,25 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.info.Info;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Path("/companies")
+@OpenAPIDefinition(
+        info = @Info(title = "Company API", version = "1.0", description = "Сервис для управления компаниями"),
+        tags = { @Tag(name = "Company", description = "Методы для работы с компаниями") }
+)
 public class CompanyResource {
     @Inject
     CompanyService companyService;
@@ -24,6 +38,11 @@ public class CompanyResource {
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Получить все компании", description = "Возвращает список всех зарегистрированных компаний.")
+    @APIResponse(responseCode = "200",
+            description = "Успешный ответ",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(implementation = Company.class)))
     public Response getCompanies() {
         List<Company> companies = companyService.findAllCompanies();
         return Response.ok(companies).build();
@@ -32,6 +51,11 @@ public class CompanyResource {
     @GET
     @Path("/{companyName}")
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Получить компанию по названию", description = "Возвращает компанию полученную по имени.")
+    @APIResponse(responseCode = "200",
+            description = "Успешный ответ",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(implementation = Company.class)))
     public Response getCompany(@PathParam("companyName") String companyName) {
         Company company = companyService.findCompanyByName(companyName);
         if (company == null) {
@@ -44,6 +68,10 @@ public class CompanyResource {
     @POST
     @Path("/add")
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Добавить новую компанию", description = "Добавляет новую компанию из DTO объекта.")
+    @APIResponse(responseCode = "200",
+            description = "Успешный ответ",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON))
     public Response addCompany(@Valid CompanyDTO company) {
         Validate<CompanyDTO> validate = new Validate<>();
         if (!validate.validateData(company)) {
@@ -57,7 +85,9 @@ public class CompanyResource {
         try {
             companyService.addCompany(newCompany);
         } catch (Exception e) {
-            return Response.status(Response.Status.valueOf(e.getMessage())).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of("Ошибка", e.getMessage()))
+                    .build();
         }
 
         return Response.ok().build();
@@ -66,6 +96,10 @@ public class CompanyResource {
     @POST
     @Path("/update/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Обновить компанию", description = "Обновляет существующую компанию из DTO объекта.")
+    @APIResponse(responseCode = "200",
+            description = "Успешный ответ",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON))
     public Response updateCompany(@PathParam("id") Long id, @Valid CompanyDTO company) {
         Validate<CompanyDTO> validate = new Validate<>();
         if (!validate.validateData(company)) {
@@ -78,7 +112,9 @@ public class CompanyResource {
         try {
             companyService.updateCompany(id, newCompany);
         } catch (Exception e) {
-            return Response.status(Response.Status.valueOf(e.getMessage())).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of("Ошибка", e.getMessage()))
+                    .build();
         }
 
         return Response.ok().build();
@@ -87,6 +123,10 @@ public class CompanyResource {
     @DELETE
     @Path("/delete/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Удалить компанию", description = "Удаляет существующую компанию по ID объекта.")
+    @APIResponse(responseCode = "200",
+            description = "Успешный ответ",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON))
     public Response deleteCompany(@PathParam("id") Long id) {
         companyService.deleteCompany(id);
 
