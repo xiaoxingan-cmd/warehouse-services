@@ -9,6 +9,7 @@ import java.util.List;
 @ApplicationScoped
 public class CustomerCartRepository implements PanacheRepository<CustomerCart> {
     public List<CustomerCart> findAllOrdersById(Long productId) {
-        return find("products.id", productId).list();
+        return find("SELECT c FROM CustomerCart c JOIN FETCH c.product p JOIN FETCH c.customer cu WHERE p.id = ?1", productId)
+                .list();
     }
 }

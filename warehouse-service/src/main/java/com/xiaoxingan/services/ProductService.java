@@ -24,19 +24,19 @@ public class ProductService {
     CompanyService companyService;
 
     public List<Product> findAllProducts() {
-        return productRepository.listAll();
+        return productRepository.findAllProducts();
     }
 
     public Product findProductByName(String name) {
-        return productRepository.findByName(name);
+        return productRepository.findProductByName(name);
     }
 
     public List<Product> findAllCompanyProducts(String name) {
-        return productRepository.findByCompanyName(name);
+        return productRepository.findAllCompanyProducts(name);
     }
 
     public Product findProductById(Long id) {
-        return productRepository.findById(id);
+        return productRepository.findProductById(id);
     }
 
     @Transactional

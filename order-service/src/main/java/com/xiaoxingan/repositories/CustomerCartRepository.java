@@ -21,7 +21,8 @@ public class CustomerCartRepository implements PanacheRepository<CustomerCart> {
     }
 
     public List<CustomerCart> findAllByCustomerId(Long customerId) {
-        return find("customer.id", customerId).list();
+        return find("SELECT c FROM CustomerCart c JOIN FETCH c.product p OIN FETCH c.customer cu WHERE c.customer.id = ?1", customerId)
+                .list();
     }
 
     @Transactional

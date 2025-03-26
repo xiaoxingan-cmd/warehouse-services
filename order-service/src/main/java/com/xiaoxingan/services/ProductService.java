@@ -4,9 +4,7 @@ import com.xiaoxingan.dto.CustomerCartDTO;
 import com.xiaoxingan.exceptions.products.ProductHasRunOutException;
 import com.xiaoxingan.models.Customer;
 import com.xiaoxingan.models.Product;
-import com.xiaoxingan.repositories.CustomerRepository;
 import com.xiaoxingan.repositories.ProductRepository;
-import com.xiaoxingan.resources.ProductResource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -16,11 +14,7 @@ public class ProductService {
     @Inject
     ProductRepository productRepository;
     @Inject
-    CustomerRepository customerRepository;
-    @Inject
     CustomerCartService customerCartService;
-    @Inject
-    ProductResource productResource;
 
     @Transactional
     public void orderProduct(CustomerCartDTO customerCartDTO) {

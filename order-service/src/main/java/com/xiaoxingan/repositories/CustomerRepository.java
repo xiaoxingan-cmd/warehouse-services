@@ -6,4 +6,5 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class CustomerRepository implements PanacheRepository<Customer> {
+
 }
