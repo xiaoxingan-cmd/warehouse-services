@@ -3,7 +3,6 @@ package com.xiaoxingan.resources;
 import com.xiaoxingan.enums.Status;
 import com.xiaoxingan.exceptions.orders.OrderNotFoundException;
 import com.xiaoxingan.exceptions.orders.OrderUpdateFailureException;
-import com.xiaoxingan.models.Company;
 import com.xiaoxingan.models.CustomerCart;
 import com.xiaoxingan.services.CustomerCartService;
 import jakarta.inject.Inject;

@@ -1,5 +1,6 @@
 package com.xiaoxingan.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -27,5 +28,6 @@ public class ProductDTO {
     private BigDecimal price;
 
     @NotNull(message = "Количество товара не должны быть пустым!")
+    @Max(value = 10000, message = "Максимум 10000 товаров")
     private short quantity;
 }

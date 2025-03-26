@@ -5,7 +5,6 @@ import com.xiaoxingan.exceptions.companies.CompanyNotFoundException;
 import com.xiaoxingan.exceptions.products.ProductNotFoundException;
 import com.xiaoxingan.exceptions.products.ProductUpdateFailureException;
 import com.xiaoxingan.exceptions.products.ProductsHaveDifferentCompanyNameException;
-import com.xiaoxingan.models.CustomerCart;
 import com.xiaoxingan.models.Product;
 import com.xiaoxingan.services.ProductService;
 import com.xiaoxingan.utils.validator.Validate;

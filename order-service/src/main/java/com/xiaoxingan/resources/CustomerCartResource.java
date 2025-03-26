@@ -39,14 +39,14 @@ public class CustomerCartResource {
     }
 
     @DELETE
-    @Path("/delete/{orderId}")
+    @Path("/delete/{cartId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Удалить заказ", description = "Удаляет заказ по ID.")
     @APIResponse(responseCode = "200",
             description = "Успешный ответ",
             content = @Content(mediaType = MediaType.APPLICATION_JSON))
-    public Response deleteCustomer(@PathParam("orderId") Long orderId) {
-        customerCartService.deleteOrder(orderId);
+    public Response deleteOrder(@PathParam("cartId") Long cartId) {
+        customerCartService.deleteOrder(cartId);
         return Response.ok().build();
     }
 }

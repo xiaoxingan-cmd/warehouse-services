@@ -2,7 +2,6 @@ package com.xiaoxingan.resources;
 
 import com.xiaoxingan.dto.ReviewDTO;
 import com.xiaoxingan.exceptions.reviews.ReviewUpdateFailureException;
-import com.xiaoxingan.models.Product;
 import com.xiaoxingan.models.Review;
 import com.xiaoxingan.services.ReviewService;
 import com.xiaoxingan.utils.validator.Validate;

@@ -24,7 +24,7 @@ public class CustomerCartService {
     ProductRepository productRepository;
 
     public List<CustomerCart> getCustomerCarts(Long customerId) {
-        log.debug("Получать список заказов пользователя по идентификатору: {}", customerId);
+        log.debug("Получаю список заказов пользователя по идентификатору: {}", customerId);
         return customerCartRepository.findAllByCustomerId(customerId);
     }
 

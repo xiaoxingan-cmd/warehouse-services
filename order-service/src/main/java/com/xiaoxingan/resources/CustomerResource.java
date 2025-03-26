@@ -3,7 +3,6 @@ package com.xiaoxingan.resources;
 import com.xiaoxingan.dto.CustomerDTO;
 import com.xiaoxingan.exceptions.customers.CustomerUpdateFailureException;
 import com.xiaoxingan.models.Customer;
-import com.xiaoxingan.models.CustomerCart;
 import com.xiaoxingan.services.CustomerService;
 import com.xiaoxingan.utils.validator.Validate;
 import jakarta.inject.Inject;

@@ -1,18 +1,25 @@
 package com.xiaoxingan.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class CustomerCartDTO {
-    @NotBlank(message = "productId не может быть пустым!")
+    @NotNull(message = "productId не может быть пустым!")
+    @Max(value = 1000000000)
+    @Min(value = 1)
     private Long productId;
 
-    @NotBlank(message = "customerId не может быть пустым!")
+    @NotNull(message = "customerId не может быть пустым!")
+    @Max(value = 1000000000)
+    @Min(value = 1)
     private Long customerId;
 
-    @NotBlank(message = "quantity не может быть пустым!")
+    @NotNull(message = "quantity не может быть пустым!")
+    @Max(value = 10000, message = "Максимум 10000 товаров")
     private short quantity;
 }
