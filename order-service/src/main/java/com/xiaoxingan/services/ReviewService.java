@@ -10,10 +10,12 @@ import com.xiaoxingan.repositories.ReviewRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @ApplicationScoped
 public class ReviewService {
     @Inject
@@ -22,18 +24,22 @@ public class ReviewService {
     ProductRepository productRepository;
 
     public List<Review> findAllReviewsByCustomerId(Long customerId) {
+        log.debug("Ищу все отзывы пользователя {} в {}", customerId, reviewRepository.getClass().getName());
         return reviewRepository.findAllByCustomerId(customerId);
     }
 
     public List<Review> findReviewsByProductId(Long productId) {
+        log.debug("Ищу все отзывы о продукте {} в {}", productId, reviewRepository.getClass().getName());
         return reviewRepository.findAllByProductId(productId);
     }
 
     @Transactional
     public void addReview(Long productId, Long customerId, ReviewDTO reviewDTO) {
+        log.debug("Ищу совпадения Product {} и Customer {}...", productId, customerId);
         Object[] result = reviewRepository.findProductAndCustomer(productId, customerId);
 
         if (result == null || result.length < 2) {
+            log.warn("Товар или клиент не найдены в базе данных!");
             throw new IllegalArgumentException("Товар или клиент не найдены!");
         }
 
@@ -41,6 +47,7 @@ public class ReviewService {
         Customer customer = (Customer) result[1];
 
         try {
+            log.debug("Пытаюсь добавить новый отзыв {}, {}", reviewDTO.getTitle(), reviewDTO.getDescription());
             Review review = new Review();
             review.setProduct(product);
             review.setCustomer(customer);
@@ -51,12 +58,14 @@ public class ReviewService {
 
             reviewRepository.persist(review);
         } catch (Exception e) {
+            log.error("Произошла ошибка во время добавления нового отзыва! " + e.getMessage());
             throw new ReviewUpdateFailureException("Ошибка при добавлении отзыва к товару: " + productId + " ." + e.getMessage());
         }
     }
 
     @Transactional
     public void deleteReview(Long reviewId) {
+        log.debug("Удаляю отзыв {} в {}", reviewId, productRepository.getClass().getName());
         productRepository.deleteById(reviewId);
     }
 }
