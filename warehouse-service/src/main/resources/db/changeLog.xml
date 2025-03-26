@@ -1,0 +1,253 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="quarkus" id="2">
+        <sql>
+            CREATE TYPE "statuses" AS ENUM (
+                'WAITING_FOR_CONFIRMATION',
+                'ON_THE_WAY',
+                'DELIVERED'
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet author="quarkus" id="3">
+        <createTable tableName="companies">
+            <column name="id" type="SERIAL">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(200)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="description" type="varchar(2000)"/>
+            <column name="country" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="now()"/>
+            <column name="updated_at" type="timestamp" defaultValueComputed="now()"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="quarkus" id="4">
+        <createTable tableName="products">
+            <column name="id" type="SERIAL">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="company_id" type="SERIAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(200)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="description" type="varchar(2000)"/>
+            <column name="price" type="decimal(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="now()"/>
+            <column name="updated_at" type="timestamp" defaultValueComputed="now()"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="quarkus" id="5">
+        <createTable tableName="reviews">
+            <column name="id" type="SERIAL">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="customer_id" type="SERIAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="SERIAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="now()"/>
+            <column name="updated_at" type="timestamp" defaultValueComputed="now()"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="quarkus" id="6">
+        <createTable tableName="customers">
+            <column name="id" type="SERIAL">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="username" type="varchar(100)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="adress" type="varchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="now()"/>
+            <column name="updated_at" type="timestamp" defaultValueComputed="now()"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="quarkus" id="7">
+        <createTable tableName="customers_cart">
+            <column name="products_id" type="SERIAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="customers_id" type="SERIAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="statuses">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="now()"/>
+            <column name="updated_at" type="timestamp" defaultValueComputed="now()"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="quarkus" id="8">
+        <addForeignKeyConstraint
+                constraintName="fk_products_company_id"
+                baseTableName="products"
+                baseColumnNames="company_id"
+                referencedTableName="companies"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="quarkus" id="9">
+        <addForeignKeyConstraint
+                constraintName="fk_reviews_customer_id"
+                baseTableName="reviews"
+                baseColumnNames="customer_id"
+                referencedTableName="customers"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="quarkus" id="10">
+        <addForeignKeyConstraint
+                constraintName="fk_reviews_product_id"
+                baseTableName="reviews"
+                baseColumnNames="product_id"
+                referencedTableName="products"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="quarkus" id="11">
+        <addForeignKeyConstraint
+                constraintName="fk_customers_cart_products_id"
+                baseTableName="customers_cart"
+                baseColumnNames="products_id"
+                referencedTableName="products"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="quarkus" id="12">
+        <addForeignKeyConstraint
+                constraintName="fk_customers_cart_customers_id"
+                baseTableName="customers_cart"
+                baseColumnNames="customers_id"
+                referencedTableName="customers"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="quarkus" id="13">
+        <addUniqueConstraint
+                tableName="reviews"
+                columnNames="customer_id, product_id"
+                constraintName="unique_customer_product_review"/>
+    </changeSet>
+
+
+    <changeSet author="quarkus" id="14">
+        <insert tableName="companies">
+            <column name="name" value="Test Company"/>
+            <column name="description" value="This is a test company."/>
+            <column name="country" value="Test Country"/>
+            <column name="created_at" valueComputed="now()"/>
+            <column name="updated_at" valueComputed="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="quarkus" id="15">
+        <insert tableName="customers">
+            <column name="username" value="testuser"/>
+            <column name="adress" value="123 Test St, Test City"/>
+            <column name="country" value="Test Country"/>
+            <column name="created_at" valueComputed="now()"/>
+            <column name="updated_at" valueComputed="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="quarkus" id="16">
+        <insert tableName="customers">
+            <column name="username" value="testuser2"/>
+            <column name="adress" value="123 Test St, Test City2"/>
+            <column name="country" value="Test Country2"/>
+            <column name="created_at" valueComputed="now()"/>
+            <column name="updated_at" valueComputed="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="quarkus" id="17">
+        <insert tableName="products">
+            <column name="company_id" value="1"/>
+            <column name="name" value="Lime"/>
+            <column name="description" value="This is a description for Test Product 1."/>
+            <column name="price" value="19.99"/>
+            <column name="quantity" value="100"/>
+            <column name="created_at" valueComputed="now()"/>
+            <column name="updated_at" valueComputed="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="quarkus" id="18">
+        <insert tableName="products">
+            <column name="company_id" value="1"/>
+            <column name="name" value="Apple"/>
+            <column name="description" value="This is a description for Test Product 2."/>
+            <column name="price" value="29.99"/>
+            <column name="quantity" value="200"/>
+            <column name="created_at" valueComputed="now()"/>
+            <column name="updated_at" valueComputed="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="quarkus" id="19">
+        <insert tableName="reviews">
+            <column name="customer_id" value="1"/>
+            <column name="product_id" value="1"/>
+            <column name="title" value="Отличный товар!"/>
+            <column name="description" value="Мне очень понравился этот продукт, качество на высоте."/>
+            <column name="created_at" valueComputed="now()"/>
+            <column name="updated_at" valueComputed="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="quarkus" id="20">
+        <insert tableName="customers_cart">
+            <column name="products_id" value="1"/>
+            <column name="customers_id" value="1"/>
+            <column name="quantity" value="1"/>
+            <column name="status" value="DELIVERED"/>
+            <column name="created_at" valueComputed="now()"/>
+            <column name="updated_at" valueComputed="now()"/>
+        </insert>
+    </changeSet>
+
+
+
+</databaseChangeLog>
