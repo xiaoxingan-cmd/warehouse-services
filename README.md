@@ -1,80 +1,60 @@
-# warehouse-shop
+# WarehouseServices
+> * В сервисе должно быть организовано логирование процессов -> Большинство из них на уровне DEBUG, поэтому часть может быть не видно.
+> * Обеспечить кэширование необходимых запросов -> Сделал отдельный метод для наглядности в сервисе "warehouse-service/src/main/java/com/xiaoxingan/resources/TestCacheResource.java", остальные итак грузятся за 5мс
+> * Обеспечить возможность доступа к API сервисов через Swagger -> /swagger
+> * Необходимо предусмотреть возможность запуска на БД с нуля, например средствами liquibase -> Добавил первоначальные таблицы и данные
+> * Выбор Базы Данных -> Изначально рассматривал MariaDB, поскольку использует намного меньше ресурсов, но в итоге остановился на Postgres
+> * Структуру хранения данных в БД -> Представлена на схеме [click](https://dbdiagram.io/d/WarehoseandShop-67e01e3b75d75cc84422a8af), но возможно что-то изменилось
+> * Внутреннюю архитектуру микросервисов -> Разобраться в Consul и Stork пока не смог, а из Springа оно не поддерживает, поэтому без SD И LoadBalancer
+> * Обработку ошибок и взаимодействие с клиентским приложением -> Добавил исключения и валидацию полей
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+## Installation
+Для быстрого запуска можно использовать docker-compose.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+```yml
+services:
 
-## Running the application in dev mode
+  warehouse-service:
+    image: shayakum/warehouse-service:1.0.0
+    depends_on:
+      - postgres
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/warehouse_db
+      QUARKUS_DATASOURCE_USERNAME: admin
+      QUARKUS_DATASOURCE_PASSWORD: admin
+    ports:
+      - 8080:8080
+    networks:
+      - warehouse_network
 
-You can run your application in dev mode that enables live coding using:
+  order-service:
+    image: shayakum/warehouse-order:1.0.0
+    depends_on:
+      - postgres
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/warehouse_db
+      QUARKUS_DATASOURCE_USERNAME: admin
+      QUARKUS_DATASOURCE_PASSWORD: admin
+    ports:
+      - 8081:8081
+    networks:
+      - warehouse_network
 
-```shell script
-./mvnw quarkus:dev
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: warehouse_db
+    networks:
+      - warehouse_network
+
+networks:
+  warehouse_network:
+    driver: bridge
 ```
-
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
-
-## Packaging and running the application
-
-The application can be packaged using:
-
-```shell script
-./mvnw package
-```
-
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/warehouse-shop-1.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Related Guides
-
-- Hibernate ORM ([guide](https://quarkus.io/guides/hibernate-orm)): Define your persistent model with Hibernate ORM and
-  Jakarta Persistence
-- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and
-  Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on
-  it.
-- Hibernate Validator ([guide](https://quarkus.io/guides/validation)): Validate object properties (field, getter) and
-  method parameters for your beans (REST, CDI, Jakarta Persistence)
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus
-  REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-
-## Provided Code
-
-### Hibernate ORM
-
-Create your first JPA entity
-
-[Related guide section...](https://quarkus.io/guides/hibernate-orm)
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+>[!NOTE]
+> Сервисы расположены на портах 8080 / 8081
+>
+> * http://localhost:8080/swagger
+> * http://localhost:8081/swagger
