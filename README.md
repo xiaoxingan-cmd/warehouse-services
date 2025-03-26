@@ -1,5 +1,5 @@
 # WarehouseServices
-> * В сервисе должно быть организовано логирование процессов -> Большинство из них на уровне DEBUG, поэтому часть может быть не видно.
+> * В сервисе должно быть организовано логирование процессов -> Большинство из них на уровне DEBUG, включил по умолчанию
 > * Обеспечить кэширование необходимых запросов -> Сделал отдельный метод для наглядности в сервисе "warehouse-service/src/main/java/com/xiaoxingan/resources/TestCacheResource.java", остальные итак грузятся за 5мс
 > * Обеспечить возможность доступа к API сервисов через Swagger -> /swagger
 > * Необходимо предусмотреть возможность запуска на БД с нуля, например средствами liquibase -> Добавил первоначальные таблицы и данные
@@ -15,7 +15,7 @@
 services:
 
   warehouse-service:
-    image: shayakum/warehouse-service:1.0.0
+    image: shayakum/warehouse-shop-service:1.0.0
     depends_on:
       - postgres
     environment:
@@ -28,7 +28,7 @@ services:
       - warehouse_network
 
   order-service:
-    image: shayakum/warehouse-order:1.0.0
+    image: shayakum/order-service:1.0.0
     depends_on:
       - postgres
     environment:
