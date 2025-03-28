@@ -20,6 +20,6 @@ public class CustomerCartDTO {
     private Long customerId;
 
     @NotNull(message = "quantity не может быть пустым!")
-    @Max(value = 10000, message = "Максимум 10000 товаров")
+    @Max(value = 10000, message = "Максимум 10000 товаров доступно для заказа")
     private short quantity;
 }

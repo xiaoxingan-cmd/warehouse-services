@@ -5,10 +5,10 @@ import com.xiaoxingan.exceptions.reviews.ReviewUpdateFailureException;
 import com.xiaoxingan.models.Customer;
 import com.xiaoxingan.models.Product;
 import com.xiaoxingan.models.Review;
-import com.xiaoxingan.repositories.ProductRepository;
 import com.xiaoxingan.repositories.ReviewRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,8 +20,6 @@ import java.util.List;
 public class ReviewService {
     @Inject
     ReviewRepository reviewRepository;
-    @Inject
-    ProductRepository productRepository;
 
     public List<Review> findAllReviewsByCustomerId(Long customerId) {
         log.debug("Ищу все отзывы пользователя {} в {}", customerId, reviewRepository.getClass().getName());
@@ -35,18 +33,17 @@ public class ReviewService {
 
     @Transactional
     public void addReview(Long productId, Long customerId, ReviewDTO reviewDTO) {
-        log.debug("Ищу совпадения Product {} и Customer {}...", productId, customerId);
-        Object[] result = reviewRepository.findProductAndCustomer(productId, customerId);
-
-        if (result == null || result.length < 2) {
-            log.warn("Товар или клиент не найдены в базе данных!");
-            throw new IllegalArgumentException("Товар или клиент не найдены!");
-        }
-
-        Product product = (Product) result[0];
-        Customer customer = (Customer) result[1];
-
         try {
+            log.debug("Ищу совпадения Product {} и Customer {}...", productId, customerId);
+            Object[] result = reviewRepository.findProductAndCustomer(productId, customerId);
+
+            Product product = (Product) result[0];
+            Customer customer = (Customer) result[1];
+
+            if (product == null || customer == null) {
+                throw new NoResultException();
+            }
+
             log.debug("Пытаюсь добавить новый отзыв {}, {}", reviewDTO.getTitle(), reviewDTO.getDescription());
             Review review = new Review();
             review.setProduct(product);
@@ -57,6 +54,8 @@ public class ReviewService {
             review.setCreatedAt(LocalDateTime.now());
 
             reviewRepository.persist(review);
+        } catch (NoResultException e) {
+            throw new NoResultException("Товар или клиент не найдены!");
         } catch (Exception e) {
             log.error("Произошла ошибка во время добавления нового отзыва! " + e.getMessage());
             throw new ReviewUpdateFailureException("Ошибка при добавлении отзыва к товару: " + productId + " ." + e.getMessage());
@@ -65,7 +64,7 @@ public class ReviewService {
 
     @Transactional
     public void deleteReview(Long reviewId) {
-        log.debug("Удаляю отзыв {} в {}", reviewId, productRepository.getClass().getName());
-        productRepository.deleteById(reviewId);
+        log.debug("Удаляю отзыв {} в {}", reviewId, reviewRepository.getClass().getName());
+        reviewRepository.deleteById(reviewId);
     }
 }

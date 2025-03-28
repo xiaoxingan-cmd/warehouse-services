@@ -5,7 +5,7 @@
 > * Необходимо предусмотреть возможность запуска на БД с нуля, например средствами liquibase -> Добавил первоначальные таблицы и данные
 > * Выбор Базы Данных -> Изначально рассматривал MariaDB, поскольку использует намного меньше ресурсов, но в итоге остановился на Postgres
 > * Структуру хранения данных в БД -> Представлена на схеме [click](https://dbdiagram.io/d/WarehoseandShop-67e01e3b75d75cc84422a8af), но возможно что-то изменилось
-> * Внутреннюю архитектуру микросервисов -> Разобраться в Consul и Stork пока не смог, а из Springа оно не поддерживает, поэтому без SD И LoadBalancer
+> * Внутреннюю архитектуру микросервисов -> Разобраться в Consul и Stork пока не смог, а из Spring оно не поддерживает, поэтому без SD И LoadBalancer
 > * Обработку ошибок и взаимодействие с клиентским приложением -> Добавил исключения и валидацию полей
 
 ## Installation
@@ -15,7 +15,7 @@
 services:
 
   warehouse-service:
-    image: shayakum/warehouse-service:1.0.0
+    image: shayakum/warehouse-shop-service:1.0.1
     depends_on:
       - postgres
     environment:
@@ -28,7 +28,7 @@ services:
       - warehouse_network
 
   order-service:
-    image: shayakum/warehouse-order:1.0.0
+    image: shayakum/order-service:1.0.1
     depends_on:
       - postgres
     environment:

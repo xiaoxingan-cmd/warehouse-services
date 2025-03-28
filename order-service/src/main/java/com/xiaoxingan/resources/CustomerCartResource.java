@@ -1,6 +1,7 @@
 package com.xiaoxingan.resources;
 
 import com.xiaoxingan.models.CustomerCart;
+import com.xiaoxingan.models.CustomerCartId;
 import com.xiaoxingan.services.CustomerCartService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -39,13 +40,17 @@ public class CustomerCartResource {
     }
 
     @DELETE
-    @Path("/delete/{cartId}")
+    @Path("/delete/{customerId}/{productId}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Удалить заказ", description = "Удаляет заказ по ID.")
+    @Operation(summary = "Удалить заказ", description = "Удаляет заказ по User ID и Product ID.")
     @APIResponse(responseCode = "200",
             description = "Успешный ответ",
             content = @Content(mediaType = MediaType.APPLICATION_JSON))
-    public Response deleteOrder(@PathParam("cartId") Long cartId) {
+    public Response deleteOrder(@PathParam("customerId") int customerId, @PathParam("productId") int productId) {
+        CustomerCartId cartId = new CustomerCartId();
+        cartId.setCustomerId(customerId);
+        cartId.setProductId(productId);
+
         customerCartService.deleteOrder(cartId);
         return Response.ok().build();
     }

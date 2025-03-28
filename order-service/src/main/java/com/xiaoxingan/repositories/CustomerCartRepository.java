@@ -3,6 +3,7 @@ package com.xiaoxingan.repositories;
 import com.xiaoxingan.enums.Status;
 import com.xiaoxingan.models.Customer;
 import com.xiaoxingan.models.CustomerCart;
+import com.xiaoxingan.models.CustomerCartId;
 import com.xiaoxingan.models.Product;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -20,6 +21,7 @@ public class CustomerCartRepository implements PanacheRepository<CustomerCart> {
         this.entityManager = entityManager;
     }
 
+
     public List<CustomerCart> findAllByCustomerId(Long customerId) {
         return find("SELECT c FROM CustomerCart c JOIN FETCH c.product p JOIN FETCH c.customer cu WHERE c.customer.id = ?1", customerId)
                 .list();
@@ -31,5 +33,14 @@ public class CustomerCartRepository implements PanacheRepository<CustomerCart> {
                 "VALUES (" + product.getId() + ", " + customer.getId() + ", " + quantity + ", '" + status.name() + "', '" + createdAt + "', '" + updatedAt + "')";
 
         entityManager.createNativeQuery(query).executeUpdate();
+    }
+
+    @Transactional
+    public void deleteByCustomerCartId(CustomerCartId customerCartId) {
+        String query = "DELETE FROM CustomerCart c WHERE c.id = :customerCartId";
+
+        entityManager.createQuery(query)
+                .setParameter("customerCartId", customerCartId)
+                .executeUpdate();
     }
 }

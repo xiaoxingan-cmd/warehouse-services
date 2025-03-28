@@ -2,10 +2,9 @@ package com.xiaoxingan.resources;
 
 import com.xiaoxingan.client.ProductServiceClient;
 import com.xiaoxingan.dto.CustomerCartDTO;
-import com.xiaoxingan.exceptions.customers.CustomerNotFoundException;
 import com.xiaoxingan.exceptions.orders.ConstructOrderFailureException;
 import com.xiaoxingan.exceptions.products.ProductHasRunOutException;
-import com.xiaoxingan.exceptions.products.ProductNotFoundException;
+import com.xiaoxingan.exceptions.products.ProductOrCustomerNotFoundException;
 import com.xiaoxingan.exceptions.products.ProductUpdateFailureException;
 import com.xiaoxingan.models.Product;
 import com.xiaoxingan.services.ProductService;
@@ -130,7 +129,7 @@ public class ProductResource {
         try {
             productService.orderProduct(customerCartDTO);
             return Response.ok().build();
-        } catch (ProductNotFoundException | CustomerNotFoundException e) {
+        } catch (ProductOrCustomerNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity(Map.of("Ошибка ", e.getMessage()))
                     .build();

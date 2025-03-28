@@ -6,6 +6,7 @@ import com.xiaoxingan.models.Review;
 import com.xiaoxingan.services.ReviewService;
 import com.xiaoxingan.utils.validator.Validate;
 import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -75,7 +76,7 @@ public class ReviewResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(Map.of("Ошибка ", e.getMessage()))
                     .build();
-        } catch (IllegalArgumentException e) {
+        } catch (NoResultException e) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity(Map.of("Ошибка ", e.getMessage()))
                     .build();

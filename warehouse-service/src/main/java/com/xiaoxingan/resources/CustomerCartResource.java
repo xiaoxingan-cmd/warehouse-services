@@ -1,9 +1,10 @@
 package com.xiaoxingan.resources;
 
-import com.xiaoxingan.enums.Status;
+import com.xiaoxingan.dto.UpdateOrderStatusDTO;
 import com.xiaoxingan.exceptions.orders.OrderNotFoundException;
 import com.xiaoxingan.exceptions.orders.OrderUpdateFailureException;
 import com.xiaoxingan.models.CustomerCart;
+import com.xiaoxingan.models.CustomerCartId;
 import com.xiaoxingan.services.CustomerCartService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -43,15 +44,19 @@ public class CustomerCartResource {
     }
 
     @POST
-    @Path("/update/{productId}")
+    @Path("/update")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Обновить статус заказа", description = "Обновляет статус заказа по ID.")
     @APIResponse(responseCode = "200",
             description = "Успешный ответ",
             content = @Content(mediaType = MediaType.APPLICATION_JSON))
-    public Response updateProductStatus(@PathParam("productId") Long productId, Status status) {
+    public Response updateOrderStatus(UpdateOrderStatusDTO updateOrderStatusDTO) {
         try {
-            customerCartService.updateOrderById(productId, status);
+            CustomerCartId cartId = new CustomerCartId();
+            cartId.setCustomerId(updateOrderStatusDTO.getCustomerId());
+            cartId.setProductId(updateOrderStatusDTO.getProductId());
+
+            customerCartService.updateOrderById(cartId, updateOrderStatusDTO.getStatus());
         } catch (OrderNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity(Map.of("Ошибка", e.getMessage()))

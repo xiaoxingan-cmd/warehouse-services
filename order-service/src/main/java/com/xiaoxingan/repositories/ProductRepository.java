@@ -3,11 +3,20 @@ package com.xiaoxingan.repositories;
 import com.xiaoxingan.models.Product;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
 @ApplicationScoped
 public class ProductRepository implements PanacheRepository<Product> {
+    private final EntityManager entityManager;
+
+    public ProductRepository(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
     public Product findByName(String name) {
         return find("name", name).firstResult();
     }
@@ -22,4 +31,10 @@ public class ProductRepository implements PanacheRepository<Product> {
                 .setParameter("customerId", customerId)
                 .getSingleResult();
     }
+
+    @Transactional
+    public Product findByIdWithLock(Long productId) {
+        return entityManager.find(Product.class, productId, LockModeType.PESSIMISTIC_WRITE);
+    }
+
 }
